@@ -1,8 +1,10 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component } from '@angular/core';
+import { IProduct } from './product';
 
 @Component({
 selector: 'pm-product-list',
-templateUrl: './product-list.component.html'
+templateUrl: './product-list.component.html',
+styleUrls:['./product-list.component.css']
 })
 export class ProductListComplenent {
     pageTitle: string = "Product List";
@@ -10,7 +12,7 @@ export class ProductListComplenent {
     buttonText: string = "Show Image";
     imageWidth: number = 50;
     imageMargin: number = 2;
-    products: any[] = [
+    products: IProduct[] = [
         {
             "productId": 1,
             "productName": "Leaf Rake",
@@ -63,22 +65,41 @@ export class ProductListComplenent {
         }
     ];
 
-    listFilter: string = "";
-
-
-    filteredProducts(): any[] {
-        console.log(this.products);
-        if (this.listFilter.length == 0) {
-            return this.products;
-        }
-        return this.products.filter((product) => {
-            product.productName.indexOf(this.listFilter) !== -1 || product.description.indexOf(this.listFilter) !== -1;
-        })
+    _listFilter: string = "";
+    filteredProducts: IProduct[];
+    get listFilter(): string {
+        return this._listFilter;
     }
+    set listFilter(value: string) {
+        console.log(value);
+        if(this.listFilter.length === 0) {
+            this.filteredProducts = this.products
+        } else {
+            this.filteredProducts = this.products.filter((product) => {
+                return product.productName.toLowerCase().includes(this.listFilter.toLowerCase())
+                || product.description.toLowerCase().includes(this.listFilter.toLowerCase())
+            })
+        }
+    }
+
+
+    // filteredProducts(): any[] {
+    //     console.log(this.products);
+    //     if (this.listFilter.length == 0) {
+    //         return this.products;
+    //     }
+    //     return this.products.filter((product) => {
+    //         product.productName.indexOf(this.listFilter) !== -1 || product.description.indexOf(this.listFilter) !== -1;
+    //     })
+    // }
 
 
     showImageHandler() {
         this.showImage = !this.showImage;
         this.buttonText = this.showImage ? "Hide Image" : "Show Image";
+    }
+
+    ngOnInit() {
+        this.filteredProducts = this.products;
     }
 }
